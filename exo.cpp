@@ -15,7 +15,7 @@ const double dy = 1.0 / (N - 1); // grid spacing
 
 
 
-//WEEEEEEEEEEEEEEEEE
+//WEEEEEEEEEEEEEEEEE333333333333 %!?,?,,%%%%
 // Laplacian
 class Pentadiagonal {
 private:
