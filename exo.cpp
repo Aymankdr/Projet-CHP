@@ -12,6 +12,10 @@ const double dt = 0.001; // time step size
 const double dx = 1.0 / (N - 1); // grid spacing
 const double dy = 1.0 / (N - 1); // grid spacing
 
+
+
+
+//WEEEEEEEEEEEEEEEEE
 // Laplacian
 class Pentadiagonal {
 private:
