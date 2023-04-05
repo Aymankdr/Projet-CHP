@@ -5,16 +5,6 @@
 typedef std::vector<double> vct;
 typedef std::vector<vct> matrix;
 
-const int N = 100; // number of grid points in x and y direction
-const int M = 1000; // number of time steps
-const double D = 1.0; // thermal diffusivity
-const double dt = 0.001; // time step size
-const double dx = 1.0 / (N - 1); // grid spacing
-const double dy = 1.0 / (N - 1); // grid spacing
-
-
-
-
 //WEEEEEEEEEEEEEEEEE333333333333 %!?,?,,%%%%
 // Laplacian
 class Pentadiagonal {
@@ -62,6 +52,44 @@ public:
     int get_size() {return _Nx*_Ny;}
   // fin public
 };
+
+double sc(vct v, vct w) {
+    double result = 0.0;
+    for (int i = 0; i < v.size(); i++) {
+        result += v[i] * w[i];
+    }
+    return result;
+}
+
+vct conjugateGradientMethod(Pentadiagonal A, vct b, vct x0, double tol, int maxIter) {
+    int n = A.size();
+    vct x(n, 0.0);
+    vct r(n, 0.0);
+    vct d(n, 0.0);
+    double alpha = 0.0;
+    double beta = 0.0;
+    double rnorm = 0.0;
+    double rnorm0 = 0.0;
+
+    x = x0;
+    r = b;
+    d = r;
+    rnorm = sqrt(sc(r, r));
+    rnorm0 = rnorm;
+    
+    int k = 0;
+    while (k < maxIter && rnorm / rnorm0 > tol) {
+        alpha = sc(r, r) / sc(d, A.matmul(d));
+        x = x + alpha * d;
+        r = r - alpha * A * d;
+        beta = sc(r, r) / sc(d, A.matmul(d));
+        d = r + beta * d;
+        rnorm = sqrt(sc(r, r));
+        k++;
+    }
+
+    return x;
+}
 
 vct conjugate_gradient(Pentadiagonal A, vct y, vct x) {
     int n = A.get_size();
@@ -181,11 +209,19 @@ double laplacian(const std::vector<double>& u, int i, int j) {
 }
 
 int main() {
+  // Constants 
+  const int N = 100; // number of grid points in x and y direction
+  const int M = 1000; // number of time steps
+  const double D = 1.0; // thermal diffusivity
+  const double dt = 0.001; // time step size
+  const double dx = 1.0 / (N - 1); // grid spacing
+  const double dy = 1.0 / (N - 1); // grid spacing
+
   // Case
   int cas=1;
 
   // initialize the temperature vector
-  std::vector<double> u(N*N, 0.0), F(N*N);
+  vct u(N*N, 0.0), F(N*N);
 
   // set the boundary conditions
   for (int i = 0; i < N; i++) {
