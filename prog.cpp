@@ -234,6 +234,7 @@ int main() {
   const double dt = 0.001; // time step size
   const double dx = 1.0 / (Nx + 1); // grid spacing
   const double dy = 1.0 / (Ny + 1); // grid spacing
+  const double t0 = 0.0; // first instant
 
   // other constants
   const int maxIter = 500;
@@ -278,11 +279,23 @@ int main() {
 
 
   // solve the linear system AU=F
+  double t = t0;
   for (int k = 1; k <= M; k++) {
-    // generate F^k+1
-
+    // adding timestep
+    t  += dt;
+    // generate F^k+1 without boundary conditions
+    for (int i = 1; i < Nx; i++) {
+    	for (int j = 1; j < Ny; j++) {
+		F[i*Nx+j] = f(i*dx, j*dy, t, cas);
+	}
+    }
+    // adding to F^k+1 boundary conditions
+    for (int j=0; j <= Ny; j++) { // verticals 
+	    
+    }
+    
     // resolution
-    u_new = conjugateGradientMethod(B, add(u,hm(dt,F)), u, tol, maxIter); // u + F^n+1
+    u_new = conjugateGradientMethod(B, add(u,hm(dt,F)), u, tol, maxIter); // u + dt*F^n+1
     u     = u_new;
   }
 
