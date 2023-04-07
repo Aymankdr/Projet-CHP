@@ -77,15 +77,17 @@ vct add(vct x, vct y) {   // somme de deux vecteurs, pour faire une soustraction
 vct GCON(double a, double b, double c, int Nx, int Ny, vct Y, vector<double> x0, double epsilon, int kmax){   // solves AX = Y
     int k,n; double beta, alpha, gamma;
     
-    n= Y.size();
-    x0.resize(n);  //
+    x0.resize(Nx*Ny);  //
     vct r0, p,z,x,r ;
-    cout << "test" << endl;
+    //cout << "test" << endl;
     r0= add(Y,hm(-1,matvec(a, b, c, Nx, Ny, x0)));            // does matvec work?
+    
     p=r0;
     beta= sqrt(sc(r0,r0));
+    //cout << beta << endl; 
     k=0;
     while ( beta>epsilon && k<=kmax)  {
+      //cout << "test" << endl;
         z=matvec(a,b,c,Nx,Ny,p);
         alpha=sc(r0,r0)/sc(z,p);
         x= add(x0,hm(alpha,p));
@@ -166,7 +168,7 @@ int main() {
 int Nx, Ny;
 
 Nx =5; Ny= 5;
-double dx, dy, dt(1.), Lx(1.), Ly(1.), D(1.);
+double dx, dy, dt(5.), Lx(1.), Ly(1.), D(1.);
 
 int tmax(10);
 dx = Lx/(Nx+1);
@@ -214,25 +216,19 @@ for(int j=0;j<Ny; j++){
 
 int kmax; 
 double epsilon;
-kmax=1000;
+kmax=100;
 epsilon=pow(10,-5);
 
-int time(0);
+int time(5);
 
 vector<double> temp,x0;
 temp.resize(Nx*Ny); x0.resize(Nx*Ny);
 temp = hm(0,temp); x0 = hm(0,x0);
 //add(T,hm(dt,F))
-  while (time<=tmax){
-    T = GCON(a, b, c, Nx, Ny,temp,x0,epsilon,kmax);       // the issue comes from here 
-    
-    time= time + dt;
-    cout<< "----------------------------------------------" << endl; 
-     if(time == tmax) cout << "end of loop" << endl;
-     cout << 1+1. << endl;
-  }
 
-cout << "La solution du système est : ";
+  while (time<=tmax){
+    cout << "time is : " << time << endl;
+       cout << "La solution du système est : ";
 for (int i = 0; i < Nx; i++) {
     for (int j = 0; j < Ny; j++) {
 	     std::cout << T[i*Nx + j] << " ";
@@ -240,6 +236,29 @@ for (int i = 0; i < Nx; i++) {
       std::cout << std::endl;
   }
 
+    T = GCON(a, b, c, Nx, Ny,F,x0,epsilon,kmax);       // the issue comes from here 
+      cout << "La solution du système est : ";
+for (int i = 0; i < Nx; i++) {
+    for (int j = 0; j < Ny; j++) {
+	     std::cout << T[i*Nx + j] << " ";
+      }
+      std::cout << std::endl;
+  }
+
+    
+    time= time + dt;
+    cout<< "----------------------------------------------" << endl; 
+     
+  }
+
+
+   cout << "La solution du système est : ";
+for (int i = 0; i < Nx; i++) {
+    for (int j = 0; j < Ny; j++) {
+	     std::cout << T[i*Nx + j] << " ";
+      }
+      std::cout << std::endl;
+  }
 
 
 
